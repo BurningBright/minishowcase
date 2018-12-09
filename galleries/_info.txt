@@ -1,0 +1,5 @@
+<h2>Thank you for installing <b>minishowcase</b>.</h2>
+<p>This is a placeholder text that you can change to welcome your users, to share links (you can use html inside it) or just to let everybody know about the wonders of <a href="http://minishowcase.frwrd.net" target="_blank">minishowcase</a>. If you want to edit it, just open the <code>_info.txt</code> file that you'll find inside the <code>/galleries/</code> folder. You can add text, links to images, and even to <a href="javascript:setGallery('venezuela',false);return false;">your galleries</a>! isn't that wicked?</p>
+<p>We at <a href="http://frwrd.net" target="_blank">frwrd.net</a> hope that you enjoy your gallery as much as we have enjoyed designing and developing it.</p>
+<p>And don't forget to <a href="http://minishowcase.frwrd.net/?instructions" target="_blank">read the instructions</a>, or <a href="http://minishowcase.frwrd.net/community/" target="_blank">share your questions</a> with us in the community.</p>
+<h3>Enjoy!</h3>
