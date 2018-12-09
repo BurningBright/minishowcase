@@ -201,7 +201,7 @@
 	}
 	
 	//// cache images (if enabled)
-	$current_gallery = array_pop(split("/", dirname($img)));
+	$current_gallery = array_pop(preg_split("/[\/]/", dirname($img)));
 	$cache_thumb_dir = "../cache/"
 		.$settings['gallery_prefix']
 		.$current_gallery;
@@ -218,7 +218,7 @@
 	
 	//// display created image ////
 	header("Content-type: image/jpeg");
-	imagejpeg($thumb, '', $img_quality);
+	imagejpeg($thumb, NULL, $img_quality);
 	
 	//// destroy images (free memory)
 	imagedestroy($image);

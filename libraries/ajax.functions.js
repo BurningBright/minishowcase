@@ -504,7 +504,7 @@
 			th_array = result.split('|');
 			images_total = th_array.pop();
 			
-			innerhtml('thumbs_cont','<ul id="thumbs_ul"></ul>');
+			innerhtml('thumbs_cont','<ul id="thumbs_ul" class="thumbs_ul"></ul>');
 				
 			innerhtml('gallery_title', '<img src="'+indicator_src+'" /> '+gallery_title_cont);
 				
@@ -514,27 +514,47 @@
 				var li = document.createElement('li')
 				li.setAttribute('id','list_'+i)
 				
-				var a = document.createElement('a')
-				a.setAttribute('id','link_'+i)
+				if (preview_mode == 3) {
+					var f = document.createElement('figure')
+					//f.setAttribute('class','th_load_div')
+					//f.setAttribute('id','thcont_'+i)
+					var a = document.createElement('a')
+					a.setAttribute('id','link_'+i)
+					f.appendChild(a)
+					if (show_thumb_name) {
+						var p = document.createElement('p')
+						p.setAttribute('id','text_'+i)
+						p.innerHTML = '&nbsp;'
+						f.appendChild(p)
+					}
+					
+					li.appendChild(f)
+					
+				} else {
 				
-				var d1 = document.createElement('div')
-				d1.setAttribute('id','image_'+i)
-				
-				var d2 = document.createElement('div')
-				d2.setAttribute('class','th_load_div')
-				d2.innerHTML = 'loading...'
-				
-				d1.appendChild(d2)
-				a.appendChild(d1)
-				
-				if (show_thumb_name) {
-					var p = document.createElement('p')
-					p.setAttribute('id','text_'+i)
-					p.innerHTML = '&nbsp;'
-					a.appendChild(p)
+					var a = document.createElement('a')
+					a.setAttribute('id','link_'+i)
+					
+					var d1 = document.createElement('div')
+					d1.setAttribute('id','image_'+i)
+					
+					var d2 = document.createElement('div')
+					d2.setAttribute('class','th_load_div')
+					d2.innerHTML = 'loading...'
+					
+					d1.appendChild(d2)
+					a.appendChild(d1)
+					
+					if (show_thumb_name) {
+						var p = document.createElement('p')
+						p.setAttribute('id','text_'+i)
+						p.innerHTML = '&nbsp;'
+						a.appendChild(p)
+					}
+					
+					li.appendChild(a)
 				}
 				
-				li.appendChild(a)
 				thul.appendChild(li)
 				
 				/*
@@ -627,6 +647,13 @@
 				alink.rel = active_id.sq();
 				alink.style.display = 'none';
 				
+			} else if (preview_mode == 3) {
+				// PhotoSwipe 4.1.1 by Cody Leon
+				alink.href = image_url;
+				//alink.className = 'photoswipe';
+				alink.rel = active_id.sq();
+				//alink.style.display = 'none';
+				alink.setAttribute('data-size', w+'x'+h)
 			} else {
 				alink.href = 'javascript:;';
 				alink.num = inum;
@@ -646,32 +673,46 @@
 					+'<tr><td valign="middle" align="center">';
 			}
 			
-			thumb_div_style = (square_thumbnails)
-				? "width:"+(thumbnail_max_size+6)+"px;height:"
-					+(thumbnail_max_size+6)+"px;"
-				: '';
-			
-			output_image += '<div style="'+thumb_div_style+'"'
-				+' id="thcont_'+inum+'">';
-			
-			// add image code //
-			output_image += '<img id="thimg_'+inum+'"'
-				+' class="thumb_loader"'
-				+' title="'+name+'" alt="'+name+'"'
-				+' src="'+indicator_src+'" />'
-			
-			output_image += '</div>';
-			
-			if (!square_thumbnails) {
-				output_image += '</td></tr></table>';
-			}
+			if (preview_mode == 3) {
+				// add image code //
+				output_image += '<img id="thimg_'+inum+'"'
+					+' class="thumb_loader"'
+					+' title="'+name+'" alt="'+name+'"'
+					+' src="'+indicator_src+'" />'
 				
-			if (show_thumb_name) {
-				output_text = thumbName(image_list[inum]['name']);
+				if (show_thumb_name) {
+					output_text = thumbName(image_list[inum]['name']);
+				}
+				
+				getID('link_'+inum).innerHTML = output_image;
+			} else {
+			
+				thumb_div_style = (square_thumbnails)
+					? "width:"+(thumbnail_max_size+6)+"px;height:"
+						+(thumbnail_max_size+6)+"px;"
+					: '';
+				
+				output_image += '<div style="'+thumb_div_style+'"'
+					+' id="thcont_'+inum+'">';
+				
+				// add image code //
+				output_image += '<img id="thimg_'+inum+'"'
+					+' class="thumb_loader"'
+					+' title="'+name+'" alt="'+name+'"'
+					+' src="'+indicator_src+'" />'
+				
+				output_image += '</div>';
+				
+				if (!square_thumbnails) {
+					output_image += '</td></tr></table>';
+				}
+					
+				if (show_thumb_name) {
+					output_text = thumbName(image_list[inum]['name']);
+				}
+				
+				getID('image_'+inum).innerHTML = output_image;
 			}
-			
-			getID('image_'+inum).innerHTML = output_image;
-			
 			if (show_thumb_name)
 				getID('text_'+inum).innerHTML = output_text;
 			
@@ -764,6 +805,9 @@
 				+'width="'+ww+'" '
 				+'height="'+hh+'" />';
 			
+			if(preview_mode == 3)
+				innerhtml('link_'+inum, output_image);
+			else
 			innerhtml('thcont_'+inum, output_image);
 			
 			/*if (show_thumb_name) {
@@ -783,6 +827,7 @@
 			
 			if (preview_mode == 1) SlimboxInit();
 			else if (preview_mode == 2) ThickBoxInit();
+			else if (preview_mode == 3) PhotoSwipeInit();
 			
 			innerhtml('gallery_title', gallery_title_cont);
 			
@@ -814,6 +859,11 @@
 	function LightboxInit() { initLightbox(); }
 	function ThickBoxInit() { TB_init(); }
 	function SlimboxInit() { Lightbox.init(); }
+	function PhotoSwipeInit() { 
+		initPhotoSwipeFromDOM('.thumbs_ul'); 
+		//initPhotoSwipeFromDOM('.my-gallery');
+		
+	}
 	
 	
 	/**** loading bar scripts ****/

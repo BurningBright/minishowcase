@@ -287,10 +287,14 @@
 	 *     ( http://jquery.com/demo/thickbox )
 	 *     some modifications by victor zambrano
 	 *
+	 * 3 : PhotoSwipe 4.1.1 include by Leon Lin
+	 *     ( http://photoswipe.com/documentation/getting-started.html )
+	 *     mobile optimise, affect optimise
+	 *
 	 *     ## PLEASE CONTACT THE RESPECTIVE CODER IF YOU
 	 *     ## RUN INTO TROUBLE WITH THESE EXTENSIONS
 	 */
-	$settings['preview_mode'] = 0;
+	$settings['preview_mode'] = 3;
 	
 	
 	/* set alternate (double) encoding for some data transfers
