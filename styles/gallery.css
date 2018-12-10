@@ -124,17 +124,29 @@ body {
 	border-top: 1px solid <?php echo $theme_menu_bg?>;
 }
 
+ #msc_menu .expandedView ul, #msc_menu .defaultView ul {
+    margin: 0px 0px 10px 0px;
+    padding: 4px 0px;
+}
 #msc_menu ul li {
 	display: block;
 	/*min-height: 14px;*/
 	margin: 0px;
-	padding: 4px 0 4px 10px;
+	padding: 4px 0 4px 0px;
 	color: <?php echo $theme_menu_link?>;
 	font-size: 12px;
 	background: <?php echo $theme_general_dimmed?>;
 	/*white-space: nowrap;*/
 }
 
+ #msc_menu .expandedView ul li, #msc_menu .defaultView ul li{
+    margin: 0px;
+    padding: 4px 0 4px 10px;
+}
+
+#msc_menu .treeView ul li div {
+    padding: 4px 0 4px 10px; 
+}
 #msc_menu ul li:hover {
 	background: <?php echo $theme_menu_bg_hover?>;
 }
@@ -176,6 +188,17 @@ body {
 
 #msc_menu #galleries_menu small {
 	color: <?php echo $theme_menu_small?>;
+}
+
+#msc_menu .folderClosed{
+    background-image:url(../themes/<?php echo $theme_id; ?>/<?php echo $theme_folder_closed; ?>);
+    background-repeat: no-repeat;
+    background-position: 0px 3.5px;
+}
+#msc_menu .folderOpened{
+    background-image: url(../themes/<?php echo $theme_id; ?>/<?php echo $theme_folder_opened; ?>);
+    background-repeat: no-repeat;
+    background-position: 0px 3.5px;
 }
 
 /*** gallery select menu *****/
@@ -860,7 +883,7 @@ body > div#msc_image {
 
 #nav_container #prev a#a_prev img:hover,
 #nav_container #next a#a_next img:hover {
-	<?php if ($$settings['mark_visited_thumbs']) { ?>
+	<?php if ($settings['mark_visited_thumbs']) { ?>
 		filter:alpha(opacity=100);
 		-moz-opacity: 1.0;
 		opacity: 1.0;

@@ -93,11 +93,11 @@
 	if (function_exists('gd_info')) {
 		$gda = gd_info();
 		$gd['version'] = $gda['GD Version'];
-		$gd['num'] = ereg_replace('[[:alpha:][:space:]()]+','',$gda['GD Version']);
+		$gd['num'] = preg_replace('/[[:alpha:][:space:]()]+/','',$gda['GD Version']);
 		$gd['freetype'] = $gda["FreeType Support"];
 		$gd['gif_read'] = $gda["GIF Read Support"];
 		$gd['gif_make'] = $gda["GIF Create Support"];
-		$gd['jpg'] = $gda["JPG Support"];
+		$gd['jpg'] = $gda["JPEG Support"];
 		$gd['png'] = $gda["PNG Support"];
 		//$gd['t1lib'] = $gd_array["T1Lib Support"];
 		//$gd['wbmp'] = $gd_array["WBMP Support"];

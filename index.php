@@ -66,6 +66,12 @@
 	<!-- END CPAINT:JSRS -->
 	
 	<!-- START AJAX SCRIPTS -->
+	<!-- add php settings values to js -->
+	<script type="text/javascript">settings = {};
+	<?php foreach($settings as $key => $value){if (!is_array($value) && $key != 'gallery_footer'){echo 'settings["'.$key.'"]="' . $value . '";';}};?>
+	</script>
+
+	
 	<script src="libraries/script.loader.php?load=init" type="text/javascript"></script>
 	<script src="libraries/ajax.functions.js" type="text/javascript"></script>
 	<!-- END AJAX SCRIPTS -->
@@ -98,6 +104,8 @@
 	<link rel="stylesheet" href="styles/includes.css" type="text/css" media="screen" />
 	<!-- END HEADER/FOOTER CSS -->
 	<?php } ?>
+	
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js" type="text/javascript"></script>
 	
 	<!-- START SCRIPTS/STYLESHEETS FOR IE PC -->
 	<!--[if IE]>

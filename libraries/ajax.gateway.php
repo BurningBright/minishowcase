@@ -65,6 +65,50 @@
 	
 	////// GET GALLERIES //////////////////////
 	
+	function scan_galleries($folder)
+	{
+		global $settings;
+		global $base_path;
+		
+		$galleries = array();
+		
+		// open directory and parse file list
+		if ($dh = opendir("$base_path/$folder")) {
+		
+			// iterate over file list & print filenames
+			while (($filename = readdir($dh)) !== false) {
+				if ((strpos($filename,".") !== 0)
+					&& (strpos($filename,"_") !== 0)
+					&& (is_dir("$base_path/$folder/$filename"))
+					) {
+						$galleries[] = $filename;
+						if ($settings['show_sub_galleries']){
+							// scan recursively the galleries
+							$subs = scan_galleries("$folder/$filename");
+							foreach ($subs as $sub) {
+									$galleries[] = "$filename/$sub";
+							}
+					}
+				}
+			}
+			// close directory
+			closedir($dh);
+			
+		} else {
+			return $galleries;
+		}
+		
+		$sorting = $settings['gallery_sorting'];
+		
+		if ($sorting > 5) $sorting = 2;
+		
+		//// sort files
+		$galleries = sortGalleries($galleries, $sorting);
+		
+		return $galleries;
+		
+	}
+	
 	function get_galleries()
 	{
 		global $settings;
@@ -73,30 +117,7 @@
 		$_double = $settings['set_double_encoding'];
 		
 		$output = "";
-		$galleries = array();
-		
-		// open directory and parse file list
-		if ($dh = opendir("$base_path/galleries")) {
-		
-			// iterate over file list & print filenames
-			while (($filename = readdir($dh)) !== false) {
-				if ((strpos($filename,".") !== 0)
-					&& (strpos($filename,"_") !== 0)
-					&& (!is_file("$base_path/galleries/$filename"))
-					) {
-						$galleries[] = $filename;
-				}
-			}
-			// close directory
-			closedir($dh);
-			
-		} else {
-			return_encoded("null", "");
-		}
-		
-		$sorting = $settings['gallery_sorting'];
-		
-		if ($sorting > 5) $sorting = 2;
+		$galleries = scan_galleries("galleries");
 		
 		//// sort files
 		$galleries = sortGalleries($galleries, $sorting);
@@ -161,12 +182,22 @@
 		// if thumbnails
 		$th_dir = "$base_path/cache/".$settings['gallery_prefix'].$id;
 		if (($settings['cache_thumbnails']) && (!is_dir($th_dir))) {
-			$mthd = mkdir($th_dir, 0777);
-			if ($mthd) {
-				@chmod($th_dir, 0777);
-				@chown($th_dir, fileowner($_SERVER["PHP_SELF"]));
+			if ($settings['show_sub_galleries'])
+                    {
+                        // Recursively create the sub directories for caching the images
+                        $folders = split("/", $id);
+                        $th_dir = "$base_path/cache/".$settings['gallery_prefix'];
+                        foreach ($folders as $f)
+                        {
+                            $th_dir .= "$f/";
+                            createDirectory($th_dir);
+                        }
+                    }
+                    else {
+                        createDirectory($th_dir);
+                    }
 			}
-		}
+		
 		
 		// open directory and parse file list
 		$num = 0;
