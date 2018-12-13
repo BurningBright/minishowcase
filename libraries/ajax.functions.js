@@ -147,6 +147,7 @@ function generateTreeGalleryMenu(galleries){
         var id = galleries_data[0];
         var g_id_files = galleries_data[1];
         var g_password = galleries_data[2];
+        var g_id_subfiles = galleries_data[3];
 
         id_files[id] = g_id_files;
         id_password[id] = (g_password) ? g_password : '';
@@ -181,7 +182,7 @@ function generateTreeGalleryMenu(galleries){
         a.innerHTML = ''
                 + ((g_password) ? '<img class="lock" src="images/lock.gif" alt="" />' : '')
                 + galleryName(name)	/* changed id to name */
-                + ' <small>(' + g_id_files + ')</small>'
+                + ' <small>(' + g_id_files + ')[' + g_id_subfiles + ']</small>'
 
         var div = document.createElement('div');
         var paddingLeft = 13*(id.split("/").length);    //@ToDo - 13 is currently static - change this

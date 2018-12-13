@@ -109,6 +109,53 @@
 		
 	}
 	
+	function scan_galleries_for_number($folder) {
+		
+		global $settings;
+		global $base_path;
+		
+		$count = 0;
+		
+		// open directory and parse file list
+		if ($dh = opendir("$base_path/$folder")) {
+		
+			// iterate over file list & print filenames
+			while (($file = readdir($dh)) !== false) {
+				
+				if ((strpos($file,".") !== 0)
+					&& (strpos($file,"_") !== 0)
+					&& (is_dir("$base_path/$folder/$file"))
+					) {
+						$count += scan_galleries_for_number("$folder/$file");
+				}
+				
+				if (($file <> ".") && ($file <> ".."))
+				{
+					$f = "$base_path/$folder"."/".$file;
+					
+					//replace double slashes
+					$f = preg_replace('/(\/){2,}/','/',$f);
+					$pinfo = pathinfo($f);
+					if(is_file($f)
+						&& (strpos($file,".") !== 0)
+						&& (strpos($file,"_") !== 0)
+						&& (!in_array($file, $settings['hidden_files']))
+						&& (in_array(strToLower($pinfo["extension"]),$settings['allowed_extensions']))
+						) {
+						$count += 1;
+					}
+				}
+			}
+			// close directory
+			closedir($dh);
+			
+		} else {
+			return $count;
+		}
+		
+		return $count;
+	}
+	
 	function get_galleries()
 	{
 		global $settings;
@@ -125,9 +172,10 @@
 		if ($galleries != 'null') {
 			foreach ($galleries as $key => $filename) {
 				$gallery_files = count(scanDirImages("$base_path/galleries/$filename"));
+				$gallery_sub_files = scan_galleries_for_number("galleries/$filename");
 				if ($settings['show_empty_galleries'] || $gallery_files > 0) {
 					$password = password_exists($base_path, $filename, $settings['password_filename']);
-					$output .= $filename.":".$gallery_files.":".$password."|";
+					$output .= $filename.":".$gallery_files.":".$password.":".$gallery_sub_files."|";
 				}
 			}
 		} else {
