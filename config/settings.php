@@ -89,9 +89,9 @@
 	 * inside the selected gallery folder:
 	 * /galleries/<selected_gallery>/password.php
 	 * NOTE: BE SURE NOT TO LEAVE SPACES
-	 *       AND TO PUT THE PASSWORD IN THE FIRST LINE
-	 *       NOT CHANGING THIS NAME RENDERS THE GALLERY VULNERABLE
-	 *       DON'T INCLUDE THE .php EXTENSION IN THE NAME */
+	 *	   AND TO PUT THE PASSWORD IN THE FIRST LINE
+	 *	   NOT CHANGING THIS NAME RENDERS THE GALLERY VULNERABLE
+	 *	   DON'T INCLUDE THE .php EXTENSION IN THE NAME */
 	$settings['password_filename'] = 'password';
 	
 	
@@ -210,6 +210,29 @@
 	$settings['info_file'] = '_info.txt';
 	
 	
+	 /**
+	  * Define your gallery type here:
+	  * VALUES: ['tree','default','expanded']
+	  * tree = tree view like an file system explorer
+	  * default = view of the normal minishowcase
+	  * expanded = default view with indent subdirectories
+	  */
+	 $settings['gallery_type'] = 'tree';
+
+	/*show/hide images from subdirectories 
+	 * (will be treated as individual galleries in the sorting)
+	 * VALUES: [ true | false ]
+	 * if you want to be able to show galleries like 
+	 * "Traveling/Europe 2008/Rome" set this to 'true' */
+	$settings['show_sub_galleries'] = true;
+
+	/*show/hide galleries that have no images in them 
+	 * (quite probable if you have the above setting enabled)
+	 * VALUES: [ true | false ]
+	 * useful if you have "Traveling/Europe 2008/Rome" gallery, 
+	 * but the "Traveling" directory has no photos
+	 * you should enable this if you are using gallery_type tree or expanded !!!!! */
+	$settings['show_empty_galleries'] = true;
 	
 	
 	/**** IMAGE & THUMBNAIL HANDLING *************************************/
@@ -276,16 +299,16 @@
 	/* set which preview mode you want to use
 	 * VALUES (if selected extension is installed):
 	 * 0 : Preview (with thumb navigation, default)
-	 *     by victor zambrano
-	 *     ( http://minishowcase.frwrd.net )
+	 *	 by victor zambrano
+	 *	 ( http://minishowcase.frwrd.net )
 	 *
 	 * 1 : Slimbox 1.22 made by by Christophe Beyls
-	 *     ( http://www.digitalia.be/software/slimbox )
-	 *     some modifications by victor zambrano
+	 *	 ( http://www.digitalia.be/software/slimbox )
+	 *	 some modifications by victor zambrano
 	 *
 	 * 2 : ThickBox 2.1 made by Cody Lindley
-	 *     ( http://jquery.com/demo/thickbox )
-	 *     some modifications by victor zambrano
+	 *	 ( http://jquery.com/demo/thickbox )
+	 *	 some modifications by victor zambrano
 	 *
 	 * 3 : PhotoSwipe 4.1.1 include by Leon Lin
 	 *     ( http://photoswipe.com/documentation/getting-started.html )

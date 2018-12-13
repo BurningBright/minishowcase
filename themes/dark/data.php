@@ -8,6 +8,8 @@
 	$theme_image_next = "next.gif";
 	$theme_image_prev = "prev.gif";
 	$theme_image_loader = "spinner.gif";
+        $theme_folder_opened = "famfamfam/bullet_toggle_minus.png";
+        $theme_folder_closed = "famfamfam/bullet_toggle_plus.png";
 	
 	//// font families
 	$theme_fonts_titles = "'Trebuchet MS', Tahoma, Verdana, Geneva, Arial";

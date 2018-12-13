@@ -201,7 +201,8 @@
 	}
 	
 	//// cache images (if enabled)
-	$current_gallery = array_pop(preg_split("/[\/]/", dirname($img)));
+	//$current_gallery = array_pop(split("/", dirname($img)));
+	$current_gallery = str_replace("../galleries/", "", dirname($img));
 	$cache_thumb_dir = "../cache/"
 		.$settings['gallery_prefix']
 		.$current_gallery;

@@ -382,4 +382,122 @@
 		return $value;
 	}
 	
+	
+	
+	
+	
+	
+	// Check if a file is an FLV video
+	function isFLV($filename){
+		if (strpos(strtolower($filename), "flv") !== FALSE)
+			return true;
+		return false;
+	}
+	
+	// Get the jpg thumbnail associated with an FLV video (if none, returns empty string)
+	function getFLVThumbnail($filename)
+	{
+		$thumbnail = "";
+		$img = $filename;
+		if (isFLV($img)) {
+			if (strpos($img, "flv") !== FALSE)
+				$img = str_replace(".flv", ".jpg", $img);
+			else
+				$img = str_replace(".FLV", ".JPG", $img);
+				
+			if (file_exists($img))
+				$thumbnail = $img;
+		}
+		return $thumbnail;
+	}
+	
+	// Checks if an image is a thumbnail for an FLV video
+	// This is useful because generally you want to display the thumbnail for the FLV video
+	function isFLVThumbnail($filename)
+	{
+		$img = $filename;
+		if (strpos(strtolower($img), "jpg") !== FALSE) {
+			if (strpos($img, "jpg") !== FALSE)
+				$img = str_replace(".jpg", ".flv", $img);
+			else
+				$img = str_replace(".JPG", ".FLV", $img);
+			
+			if (file_exists($img))
+				return true;
+		}
+		return false;
+	}
+        
+        // Checks if zip support can be enabled
+        // and checks if zip support should be enabled
+        function isZIPActivated(){
+            global $settings;
+            return extension_loaded("zip") && $settings['include_zip_files'];
+        }
+        
+        // Returns true if the filename/file is a zip file
+        function isZIPFile($filename){
+            $file = new SplFileInfo($filename);            
+            if ($file->getExtension() === "zip" && file_exists($filename)){
+                return true;
+            }
+            return false;
+        }
+        
+        // Counts the available images/video files in the zip file
+        function countZIPFileContent($pathToZIPFile){
+            return count(getZIPFileContent($pathToZIPFile));
+        }
+        
+        // returns all video  and image files from the zip
+        // directories remains!
+        function getZIPFileContent($pathToZIPFile){
+            global $settings;
+            $availableFiles = array();
+            $za = new ZipArchive(); 
+            $za->open($pathToZIPFile);
+            for( $i = 0; $i < $za->numFiles; $i++ ){
+                $stat = $za->statIndex( $i );
+                //only allow files supported by the allowed_extendsions settings
+                if (in_array(strtolower((pathinfo($stat['name'])["extension"])), $settings['allowed_extensions'])){
+                    $availableFiles[] = $stat['name'];
+                }
+            }
+            $za->close();
+            return $availableFiles;
+        }
+	
+	function getDirectoryFileContent($pathToDirectory){
+            global $settings;
+            $files = array();
+            $dh = opendir($pathToDirectory);
+            if (!is_null($dh)) {
+                // iterate over file list & output all filenames
+                while (($filename = readdir($dh)) !== false) {
+                    $pinfo = pathinfo($filename);
+                    if ((strpos($filename,"_") !== 0)
+                    && (strpos($filename,".") !== 0)
+                    && (in_array(strToLower($pinfo["extension"]),$settings['allowed_extensions']))
+                    ) {
+                            $full_filename = "$base_path/galleries/$id/$filename";
+
+                            $files[] = $filename;
+                    }
+                }
+                // close directory
+                closedir($dh);
+            }
+            
+            return $files;
+        }
+        
+        // creates a directory, sets std minishowcase rights (not changed)
+        // ToDo: dummy rights - change it!
+        function createDirectory($pathToDirectory){
+            $mthd = mkdir($pathToDirectory, 0777);
+            if ($mthd) {
+                    @chmod($pathToDirectory, 0777);
+                    @chown($pathToDirectory, fileowner($_SERVER["PHP_SELF"]));
+            }
+        }
 ?>

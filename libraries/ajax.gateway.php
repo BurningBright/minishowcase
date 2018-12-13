@@ -65,33 +65,37 @@
 	
 	////// GET GALLERIES //////////////////////
 	
-	function get_galleries()
+	function scan_galleries($folder)
 	{
 		global $settings;
 		global $base_path;
 		
-		$_double = $settings['set_double_encoding'];
-		
-		$output = "";
 		$galleries = array();
 		
 		// open directory and parse file list
-		if ($dh = opendir("$base_path/galleries")) {
+		if ($dh = opendir("$base_path/$folder")) {
 		
 			// iterate over file list & print filenames
 			while (($filename = readdir($dh)) !== false) {
 				if ((strpos($filename,".") !== 0)
 					&& (strpos($filename,"_") !== 0)
-					&& (!is_file("$base_path/galleries/$filename"))
+					&& (is_dir("$base_path/$folder/$filename"))
 					) {
 						$galleries[] = $filename;
+						if ($settings['show_sub_galleries']){
+							// scan recursively the galleries
+							$subs = scan_galleries("$folder/$filename");
+							foreach ($subs as $sub) {
+									$galleries[] = "$filename/$sub";
+							}
+					}
 				}
 			}
 			// close directory
 			closedir($dh);
 			
 		} else {
-			return_encoded("null", "");
+			return $galleries;
 		}
 		
 		$sorting = $settings['gallery_sorting'];
@@ -101,11 +105,78 @@
 		//// sort files
 		$galleries = sortGalleries($galleries, $sorting);
 		
+		return $galleries;
+		
+	}
+	
+	function scan_galleries_for_number($folder) {
+		
+		global $settings;
+		global $base_path;
+		
+		$count = 0;
+		
+		// open directory and parse file list
+		if ($dh = opendir("$base_path/$folder")) {
+		
+			// iterate over file list & print filenames
+			while (($file = readdir($dh)) !== false) {
+				
+				if ((strpos($file,".") !== 0)
+					&& (strpos($file,"_") !== 0)
+					&& (is_dir("$base_path/$folder/$file"))
+					) {
+						$count += scan_galleries_for_number("$folder/$file");
+				}
+				
+				if (($file <> ".") && ($file <> ".."))
+				{
+					$f = "$base_path/$folder"."/".$file;
+					
+					//replace double slashes
+					$f = preg_replace('/(\/){2,}/','/',$f);
+					$pinfo = pathinfo($f);
+					if(is_file($f)
+						&& (strpos($file,".") !== 0)
+						&& (strpos($file,"_") !== 0)
+						&& (!in_array($file, $settings['hidden_files']))
+						&& (in_array(strToLower($pinfo["extension"]),$settings['allowed_extensions']))
+						) {
+						$count += 1;
+					}
+				}
+			}
+			// close directory
+			closedir($dh);
+			
+		} else {
+			return $count;
+		}
+		
+		return $count;
+	}
+	
+	function get_galleries()
+	{
+		global $settings;
+		global $base_path;
+		
+		$_double = $settings['set_double_encoding'];
+		
+		$output = "";
+		$galleries = scan_galleries("galleries");
+		
+		//// sort files
+		$galleries = sortGalleries($galleries, $sorting);
+		
 		if ($galleries != 'null') {
 			foreach ($galleries as $key => $filename) {
 				$gallery_files = count(scanDirImages("$base_path/galleries/$filename"));
-				$password = password_exists($base_path, $filename, $settings['password_filename']);
-				$output .= $filename.":".$gallery_files.":".$password."|";
+				$gallery_sub_files = scan_galleries_for_number("galleries/$filename");
+				if ($settings['show_empty_galleries'] || $gallery_files > 0) {
+					$password = password_exists($base_path, $filename, $settings['password_filename']);
+					$output .= $filename.":".$gallery_files.":".$password.":".$gallery_sub_files."|";
+				}
 			}
 		} else {
 			$output = "error with sorting "+$sorting;
@@ -161,31 +232,27 @@
 		// if thumbnails
 		$th_dir = "$base_path/cache/".$settings['gallery_prefix'].$id;
 		if (($settings['cache_thumbnails']) && (!is_dir($th_dir))) {
-			$mthd = mkdir($th_dir, 0777);
-			if ($mthd) {
-				@chmod($th_dir, 0777);
-				@chown($th_dir, fileowner($_SERVER["PHP_SELF"]));
+			if ($settings['show_sub_galleries'])
+                    {
+                        // Recursively create the sub directories for caching the images
+                        $folders = split("/", $id);
+                        $th_dir = "$base_path/cache/".$settings['gallery_prefix'];
+                        foreach ($folders as $f)
+                        {
+                            $th_dir .= "$f/";
+                            createDirectory($th_dir);
+                        }
+                    }
+                    else {
+                        createDirectory($th_dir);
+                    }
 			}
-		}
+		
 		
 		// open directory and parse file list
 		$num = 0;
-		if ($dh = opendir($dir)) {
-			// iterate over file list & output all filenames
-			while (($filename = readdir($dh)) !== false) {
-				$pinfo = pathinfo($filename);
-				if ((strpos($filename,"_") !== 0)
-				&& (strpos($filename,".") !== 0)
-				&& (!in_array($filename, $hidden_files))
-				&& (in_array(strToLower($pinfo["extension"]),$settings['allowed_extensions']))
-				) {
-					$all_thumbs[] = $filename;
-				}
-			}
-			// close directory
-			closedir($dh);
-		}
-			
+		//normal directory
+        $all_thumbs = getDirectoryFileContent($dir);
 		$all_thumbs = sortFiles($all_thumbs, $settings['thumbnail_sorting'], "$base_path/galleries/$id/");
 		
 		if ($all_thumbs != 'null') {

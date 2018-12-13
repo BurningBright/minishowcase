@@ -138,6 +138,169 @@
 		}
 	}
 	
+function generateTreeGalleryMenu(galleries){
+    var ul = document.createElement('ul')
+
+    for (var i = 0; i < galleries.length - 1; i++)
+    {
+        var galleries_data = galleries[i].split(":");
+        var id = galleries_data[0];
+        var g_id_files = galleries_data[1];
+        var g_password = galleries_data[2];
+        var g_id_subfiles = galleries_data[3];
+
+        id_files[id] = g_id_files;
+        id_password[id] = (g_password) ? g_password : '';
+
+        var li = document.createElement('li')
+        li.id = 'mitem_' + i;
+        li.setAttribute('id', 'mitem_' + i);
+
+        if (number_galleries) {
+            var em = document.createElement('em')
+            em.innerHTML = zero(i + 1) + '&nbsp;';
+            li.appendChild(em);
+        }
+
+        // we only need the name of the subdirectory, not the whole path here
+        // this is our name we like to display!
+        // path/name
+        var name = id.substring(id.lastIndexOf('/') + 1, id.length);
+        // but we need the path too
+        // path/name
+        var path = id.substring(0, id.lastIndexOf('/'));
+
+        var a = document.createElement('a')
+        a.setAttribute('id', id)
+        a.setAttribute('href', 'javascript:;')
+        if (!number_galleries)
+            a.setAttribute('class', 'nonum')
+        a.onclick = function () {
+            // show the gallery
+            setGallery(this.id.sq(), this)
+        }
+        a.innerHTML = ''
+                + ((g_password) ? '<img class="lock" src="images/lock.gif" alt="" />' : '')
+                + galleryName(name)	/* changed id to name */
+                + ' <small>(' + g_id_files + ')[' + g_id_subfiles + ']</small>'
+
+        var div = document.createElement('div');
+        var paddingLeft = 13*(id.split("/").length);    //@ToDo - 13 is currently static - change this
+        div.style.paddingLeft=paddingLeft+"px";
+        div.onclick = function () {
+            // show / hide subfolders
+            var uls = this.parentNode.getElementsByTagName("ul");
+            if (uls.length > 0){
+                $(uls[0]).toggle();
+                $(this).toggleClass('folderOpened').toggleClass('folderClosed');
+            }
+        }
+        div.appendChild(a);
+        li.appendChild(div);
+
+        if (path.length <= 0){
+            //in this case we have a top level directory (no parent)
+            ul.appendChild(li);
+            var m = getID('galleries_menu');
+            m.appendChild(ul);
+        }else{
+            //we have some subdirectory
+            //so we have to add the li to another ul from an other li
+            //so first try to get the id
+            var idx;
+            var _id;
+            for (idx = i; idx >= 0; idx--){
+                if (galleries[idx].split(":")[0] === path){
+                    _id = 'mitem_'+idx;
+                    break;
+                }
+            } 
+            // we have to add our li to this li
+            if (_id){
+                var existingLiForNewLi = document.getElementById(_id);
+                var divFromExistingLi = existingLiForNewLi.getElementsByTagName('DIV');
+                if (typeof divFromExistingLi !== 'undefined' && divFromExistingLi.length > 0){
+                   $(divFromExistingLi[0]).addClass('folderClosed');
+                    // get x background position
+                    var backgroundPosition = $(divFromExistingLi[0]).css("background-position").split(" ");
+                    $(divFromExistingLi[0]).css("background-position", 13*(id.split("/").length-2)+"px "+backgroundPosition[1]);
+                }
+                
+                if (existingLiForNewLi){
+                    // if there is no ul element
+                    // create one
+                    if (existingLiForNewLi.getElementsByTagName("UL").length === 0){
+                        var newUl = document.createElement('ul');
+                        newUl.style.cssText = 'display: none';
+                        existingLiForNewLi.appendChild(newUl);
+                    }
+                    // add the li element to the ul element
+                    var uls = existingLiForNewLi.getElementsByTagName("UL");
+                    if (typeof uls !== 'undefined' && uls.length > 0){
+                        uls[0].appendChild(li);
+                    }
+                }
+            }                
+        }
+    }
+}
+
+
+function generateDefaultGalleryMenu(galleries, expanded){
+    var ul = document.createElement('ul')
+			
+    for (var i=0; i<galleries.length-1; i++)
+    {
+        var galleries_data = galleries[i].split(":");
+        var id = galleries_data[0];
+        var g_id_files = galleries_data[1];
+        var g_password = galleries_data[2];
+
+        id_files[id] = g_id_files;
+        id_password[id] =  (g_password) ? g_password : '';
+
+        var li = document.createElement('li')
+        li.setAttribute('id', 'mitem_'+i)
+        if (i>0) li.setAttribute('class', 'topline')
+
+        if (number_galleries) {
+                var em = document.createElement('em')
+                em.innerHTML = zero(i+1)+'&nbsp;'
+                li.appendChild(em)
+        }
+
+        var a = document.createElement('a')
+        a.setAttribute('id', id)
+        a.setAttribute('href', 'javascript:;')
+        if (!number_galleries) a.setAttribute('class', 'nonum')
+        a.onclick = function() { setGallery(this.id.sq(),this) }
+        
+        if (expanded === true){
+            var nameArray = id.split('/');
+            var length = nameArray.length;
+            var name = '';
+            if (length > 1){
+              for(var idx=1; idx < length; idx++){
+                name = name + '&nbsp;&nbsp;';
+              }
+            }
+            id = name + '-' + nameArray[length-1];
+        }
+        a.innerHTML = ''
+                +((g_password)?'<img class="lock" src="images/lock.gif" alt="" />':'')
+                + galleryName(id)
+                +' <small>('+g_id_files+')</small>'
+
+        li.appendChild(a)
+
+        ul.appendChild(li)
+    }
+
+    innerhtml('galleries_menu', '');
+
+    var m = getID('galleries_menu')
+    m.appendChild(ul)
+}
 	
 	function updateGalleriesMenu(request)
 	{
@@ -149,48 +312,28 @@
 			var menu = "";
 			var gallery_list = new Array();
 			
-			var ul = document.createElement('ul')
-			
-			for (var i=0; i<galleries.length-1; i++)
-			{
-				var galleries_data = galleries[i].split(":");
-				var id = galleries_data[0];
-				var g_id_files = galleries_data[1];
-				var g_password = galleries_data[2];
-				
-				id_files[id] = g_id_files;
-				id_password[id] =  (g_password) ? g_password : '';
-				
-				var li = document.createElement('li')
-				li.setAttribute('id', 'mitem_'+i)
-				if (i>0) li.setAttribute('class', 'topline')
-				
-				if (number_galleries) {
-					var em = document.createElement('em')
-					em.innerHTML = zero(i+1)+'&nbsp;'
-					li.appendChild(em)
-				}
-				
-				var a = document.createElement('a')
-				a.setAttribute('id', id)
-				a.setAttribute('href', 'javascript:;')
-				if (!number_galleries) a.setAttribute('class', 'nonum')
-				a.onclick = function() { setGallery(this.id.sq(),this) }
-				a.innerHTML = ''
-					+((g_password)?'<img class="lock" src="images/lock.gif" alt="" />':'')
-					+ galleryName(id)
-					+' <small>('+g_id_files+')</small>'
-					
-				li.appendChild(a)
-				
-				ul.appendChild(li)
-			}
 			
 			innerhtml('galleries_menu', '');
 			
-			var m = getID('galleries_menu')
-			m.appendChild(ul)
-			
+			if ('gallery_type' in settings){
+            switch(settings['gallery_type']){
+                case 'tree':
+                    generateTreeGalleryMenu(galleries);
+                    $(galleries_menu).addClass(settings['gallery_type']+"View");
+                    break;
+                case 'expanded':
+                    generateDefaultGalleryMenu(galleries, true);
+                    $(galleries_menu).addClass(settings['gallery_type']+"View");
+                    break;       
+                default:
+                    generateDefaultGalleryMenu(galleries, false);
+                    $(galleries_menu).addClass("defaultView");
+                    break;
+            }
+        }else{
+            $(galleries_menu).addClass("defaultView");
+            generateDefaultGalleryMenu(galleries, false);
+		}
 			if (query_parameters['g']) {
 				setGallery(query_parameters['g'], false);
 				
@@ -207,6 +350,8 @@
 					}
 				}
 			}
+		
+			
 		
 		// no galleries available
 		} else {
