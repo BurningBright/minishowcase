@@ -105,7 +105,7 @@
 	<!-- END HEADER/FOOTER CSS -->
 	<?php } ?>
 	
-	<script src="http://code.jquery.com/jquery-1.11.1.min.js" type="text/javascript"></script>
+	<script src="libraries/jquery-1.11.1.min.js" type="text/javascript"></script>
 	
 	<!-- START SCRIPTS/STYLESHEETS FOR IE PC -->
 	<!--[if IE]>

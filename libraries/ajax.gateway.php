@@ -125,8 +125,10 @@
 		if ($galleries != 'null') {
 			foreach ($galleries as $key => $filename) {
 				$gallery_files = count(scanDirImages("$base_path/galleries/$filename"));
-				$password = password_exists($base_path, $filename, $settings['password_filename']);
-				$output .= $filename.":".$gallery_files.":".$password."|";
+				if ($settings['show_empty_galleries'] || $gallery_files > 0) {
+					$password = password_exists($base_path, $filename, $settings['password_filename']);
+					$output .= $filename.":".$gallery_files.":".$password."|";
+				}
 			}
 		} else {
 			$output = "error with sorting "+$sorting;
@@ -201,22 +203,8 @@
 		
 		// open directory and parse file list
 		$num = 0;
-		if ($dh = opendir($dir)) {
-			// iterate over file list & output all filenames
-			while (($filename = readdir($dh)) !== false) {
-				$pinfo = pathinfo($filename);
-				if ((strpos($filename,"_") !== 0)
-				&& (strpos($filename,".") !== 0)
-				&& (!in_array($filename, $hidden_files))
-				&& (in_array(strToLower($pinfo["extension"]),$settings['allowed_extensions']))
-				) {
-					$all_thumbs[] = $filename;
-				}
-			}
-			// close directory
-			closedir($dh);
-		}
-			
+		//normal directory
+        $all_thumbs = getDirectoryFileContent($dir);
 		$all_thumbs = sortFiles($all_thumbs, $settings['thumbnail_sorting'], "$base_path/galleries/$id/");
 		
 		if ($all_thumbs != 'null') {

@@ -332,7 +332,7 @@ function generateDefaultGalleryMenu(galleries, expanded){
         }else{
             $(galleries_menu).addClass("defaultView");
             generateDefaultGalleryMenu(galleries, false);
-			
+		}
 			if (query_parameters['g']) {
 				setGallery(query_parameters['g'], false);
 				
@@ -349,7 +349,7 @@ function generateDefaultGalleryMenu(galleries, expanded){
 					}
 				}
 			}
-		}
+		
 			
 		
 		// no galleries available
