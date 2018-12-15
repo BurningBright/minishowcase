@@ -179,10 +179,19 @@ function generateTreeGalleryMenu(galleries){
             // show the gallery
             setGallery(this.id.sq(), this)
         }
-        a.innerHTML = ''
+        
+        
+        if(settings['show_sub_galleries_count']) {
+            a.innerHTML = ''
                 + ((g_password) ? '<img class="lock" src="images/lock.gif" alt="" />' : '')
-                + galleryName(name)	/* changed id to name */
+                + galleryName(name)    /* changed id to name */
                 + ' <small>(' + g_id_files + ')[' + g_id_subfiles + ']</small>'
+        } else {
+            a.innerHTML = ''
+                + ((g_password) ? '<img class="lock" src="images/lock.gif" alt="" />' : '')
+                + galleryName(name)    /* changed id to name */
+                + ' <small>(' + g_id_files + ')</small>'
+        }
 
         var div = document.createElement('div');
         var paddingLeft = 13*(id.split("/").length);    //@ToDo - 13 is currently static - change this

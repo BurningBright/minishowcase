@@ -114,6 +114,9 @@
 		global $settings;
 		global $base_path;
 		
+		// is not directory
+		if(!is_dir("$base_path/$folder")) return 0;
+		
 		$count = 0;
 		
 		// open directory and parse file list
@@ -172,7 +175,10 @@
 		if ($galleries != 'null') {
 			foreach ($galleries as $key => $filename) {
 				$gallery_files = count(scanDirImages("$base_path/galleries/$filename"));
-				$gallery_sub_files = scan_galleries_for_number("galleries/$filename");
+				$gallery_sub_files = 0;
+				if ($settings['show_sub_galleries_count']) {
+					$gallery_sub_files = scan_galleries_for_number("galleries/$filename");
+				}
 				if ($settings['show_empty_galleries'] || $gallery_files > 0) {
 					$password = password_exists($base_path, $filename, $settings['password_filename']);
 					$output .= $filename.":".$gallery_files.":".$password.":".$gallery_sub_files."|";

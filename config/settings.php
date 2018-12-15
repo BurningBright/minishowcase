@@ -226,6 +226,13 @@
 	 * "Traveling/Europe 2008/Rome" set this to 'true' */
 	$settings['show_sub_galleries'] = true;
 
+	/**
+	 * show/hide images number from subdirectories 
+	 * VALUES: [ true | false ]
+	 * if you want to be able to show galleries image number like 
+	 * "Traveling(10)[25]" set this to 'true' */
+	$settings['show_sub_galleries_count'] = true;
+	
 	/*show/hide galleries that have no images in them 
 	 * (quite probable if you have the above setting enabled)
 	 * VALUES: [ true | false ]
