@@ -102,6 +102,7 @@
 	
 	$thumb = '';	
 	$image = '';
+	$imgWeb = '';
 
     //// cache images (if enabled)
     //$current_gallery = array_pop(split("/", dirname($img)));
@@ -110,22 +111,25 @@
         .$settings['gallery_prefix']
         .$current_gallery;
 
-	if ($img && file_exists($img)) {
-
-        if (strpos(strtolower($img), "flv") !== FALSE) {
-            if (strpos($img, "flv") !== FALSE)
-                $img = str_replace(".flv", ".jpg", $img);
-            else
-                $img = str_replace(".FLV", ".JPG", $img);
 
 
-            if (!file_exists($img))
-            {
-                // Guess there is no thumbnail, just load camcorder version.
-                $img = "../images/flv_128px.png";
-            }
+    if (strpos(strtolower($img), "flv") !== FALSE) {
+        if (strpos($img, "flv") !== FALSE)
+            $img = str_replace(".flv", ".png", $img);
+        else
+            $img = str_replace(".FLV", ".PNG", $img);
+
+        // web request object name, may video
+        $imgWeb = $img;
+
+        if (!file_exists($img))
+        {
+            // Guess there is no thumbnail, just load camcorder version.
+            $img = "../images/flv_128px.png";
         }
+    }
 
+    if ($img && file_exists($img)) {
 		//// get image size ////
 		$img_info = getimagesize($img);
 		
@@ -222,9 +226,7 @@
 		
 	}
 		
-	$thumb_url = $cache_thumb_dir."/"
-		.$_prefix
-		.basename($img);
+	$thumb_url = $cache_thumb_dir."/".$_prefix.basename($imgWeb);
 		
 	if ($unlink) $delete = @unlink($thumb_url);
 	
