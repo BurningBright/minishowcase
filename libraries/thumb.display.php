@@ -32,7 +32,8 @@
 		"SWC",
 		"IFF",
 		"WBMP",
-		"XBM"
+		"XBM",
+        "FLV"
 	);
 	
 	// debug
@@ -101,9 +102,30 @@
 	
 	$thumb = '';	
 	$image = '';
-	
+
+    //// cache images (if enabled)
+    //$current_gallery = array_pop(split("/", dirname($img)));
+    $current_gallery = str_replace("../galleries/", "", dirname($img));
+    $cache_thumb_dir = "../cache/"
+        .$settings['gallery_prefix']
+        .$current_gallery;
+
 	if ($img && file_exists($img)) {
-		
+
+        if (strpos(strtolower($img), "flv") !== FALSE) {
+            if (strpos($img, "flv") !== FALSE)
+                $img = str_replace(".flv", ".jpg", $img);
+            else
+                $img = str_replace(".FLV", ".JPG", $img);
+
+
+            if (!file_exists($img))
+            {
+                // Guess there is no thumbnail, just load camcorder version.
+                $img = "../images/flv_128px.png";
+            }
+        }
+
 		//// get image size ////
 		$img_info = getimagesize($img);
 		
@@ -199,13 +221,6 @@
 		$created = imagecopyresampled($thumb, $image, 0, 0, $move_w, $move_h, $w, $h, $th_w, $th_h);
 		
 	}
-	
-	//// cache images (if enabled)
-	//$current_gallery = array_pop(split("/", dirname($img)));
-	$current_gallery = str_replace("../galleries/", "", dirname($img));
-	$cache_thumb_dir = "../cache/"
-		.$settings['gallery_prefix']
-		.$current_gallery;
 		
 	$thumb_url = $cache_thumb_dir."/"
 		.$_prefix

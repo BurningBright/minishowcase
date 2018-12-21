@@ -190,7 +190,7 @@
 		}
 		
 		if ($sort_flag) return $files;
-		else return 'null';
+		return 'null';
 	}
 	
 	
@@ -243,6 +243,7 @@
 					&& (strpos($file,"_") !== 0)
 					&& (!in_array($file, $settings['hidden_files']))
 					&& (in_array(strToLower($pinfo["extension"]),$settings['allowed_extensions']))
+					&& !isFLVThumbnail($f)
 					) {
 					$list[] = $f;
 				}
@@ -480,7 +481,10 @@
                     && (in_array(strToLower($pinfo["extension"]),$settings['allowed_extensions']))
                     ) {
                             $full_filename = "$base_path/galleries/$id/$filename";
-
+                            
+                            // Check that this is not a thumbnail for an FLV file
+                            if (isFLVThumbnail($full_filename))
+                                    continue;
                             $files[] = $filename;
                     }
                 }

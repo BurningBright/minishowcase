@@ -1130,6 +1130,16 @@ function generateDefaultGalleryMenu(galleries, expanded){
 		var fw = nw;
 		var fh = nh;
 		
+		// Add support for displaying FLVs
+		var flvIndex = img.toLowerCase().indexOf('flv');
+		if (flvIndex >= 0) {
+			// We have an FLV video, so load an iframe that will play the video
+			var nfw = fw + 20;
+			var nfh = fh + 20;
+			//imgout = '<iframe style="background-color: white;" src="libraries/flv.player.php?file=' + Url.encode(img) + '&width=' + fw + '&height=' + fh + '" width="' + nfw + '" height="' + nfh + '"><p>Your browser does not support iframes.</p></iframe>';
+			imgout = '<video id="video_flv" controls preload="none" style="width:498px;height:378px" ></video>';
+
+		} else {
 		if (resized_img && create_thumbnails) {
 			//// enlarge message on top
 			//imgout += '<p><a href="'+escapedImg+'" target="_blank"><small>'+lang['alert_enlarge']+'</small></a></p>';
@@ -1159,6 +1169,7 @@ function generateDefaultGalleryMenu(galleries, expanded){
 			imgout = '<img id="mainimg" class="imagen" src="'+escapedImg+'"  width="'+fw+'" height="'+fh+'" title="'+name+'" alt="'+name+'" />';
 			
 		}
+	}
 		
 		var imgdiv = getID('img');
 		imgdiv.style.width = Math.round(nw+18)+'px';
@@ -1166,7 +1177,7 @@ function generateDefaultGalleryMenu(galleries, expanded){
 		
 		//// set image source
 		innerhtml('img', imgout);
-		
+
 		//// set image title
 		innerhtml('image_title', iname);
 		
@@ -1180,6 +1191,19 @@ function generateDefaultGalleryMenu(galleries, expanded){
 		}
 		
 		setCurrentPosition();
+
+		if (flvIndex >= 0) {
+			if (flvjs.isSupported()) {
+				var videoElement = document.getElementById('video_flv');
+				var flvPlayer = flvjs.createPlayer({
+					type: 'flv',
+					url: Url.encode(img)
+				});
+				flvPlayer.attachMediaElement(videoElement);
+				flvPlayer.load();
+				flvPlayer.play();
+			}
+		}
 	}
 	
 	function buildNavThumbs()

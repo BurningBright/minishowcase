@@ -274,13 +274,17 @@
 	 * they have been seen already 
 	 * NOTE: it has only been tested in Safari and Firefox */
 	$settings['mark_visited_thumbs'] = false;
-	
-	
-	
-	
+
+    /* FLV VIDEO SIZE
+     * set the size of the video displayed in the browser
+     * VALUES: [ <number> ] */
+    $settings['video_size_width'] = 480;
+    $settings['video_size_height'] = 360;
+
+
+
 	/**** IMAGE LOADING AND DISPLAYING SETTINGS ******************/
-	
-	
+
 	/* Gallery menu and Thumbnail sorting (ordering)
 	 * VALUES:
 	 * 0 : default platform sorting (check it on your platform)
@@ -409,6 +413,7 @@
 	$settings['allowed_extensions'][] = 'jpeg';
 	$settings['allowed_extensions'][] = 'png';
 	$settings['allowed_extensions'][] = 'gif';
+	$settings['allowed_extensions'][] = 'flv';
 	
 	
 	/* if folder /cache/ is writable and create_thumbnails is TRUE

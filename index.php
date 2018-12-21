@@ -106,6 +106,7 @@
 	<?php } ?>
 	
 	<script src="libraries/jquery-1.11.1.min.js" type="text/javascript"></script>
+    <script src="libraries/flv.min.js" type="text/javascript"></script>
 	
 	<!-- START SCRIPTS/STYLESHEETS FOR IE PC -->
 	<!--[if IE]>

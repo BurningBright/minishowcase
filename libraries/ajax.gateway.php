@@ -81,7 +81,12 @@
 					&& (strpos($filename,"_") !== 0)
 					&& (is_dir("$base_path/$folder/$filename"))
 					) {
+						// Ignore if this is an FLV thumbnail, we'll display the thumbnail for the FLV video
+						if (isFLVThumbnail("$base_path/$folder/$filename"))
+							continue;
 						$galleries[] = $filename;
+						
+						// We can optionally scan sub-directories too
 						if ($settings['show_sub_galleries']){
 							// scan recursively the galleries
 							$subs = scan_galleries("$folder/$filename");
@@ -286,6 +291,9 @@
 
 				$size = @getimagesize($imgPath);
 				
+				if (isFLV("../".$img))
+                    $size = array($settings['video_size_width'], $settings['video_size_height']);
+				
 				//if ($size) {
 					$output .= $img.";".$caption.";".$size[0].";".$size[1].";".$thumb."|";
 					$n++;
@@ -330,6 +338,11 @@
 		}
 		
 		$size = @getimagesize("../".$img);
+		
+		// For the video, set to a fixed size
+		if (isFLV("../".$img))
+            $size = array($settings['video_size_width'], $settings['video_size_height']);
+		
 		$output = $num.";".$img.";".$name.";".$size[0].";".$size[1].";".$desc;
 		
 		$encoding = ($_double) ? "url" : "utf8";
