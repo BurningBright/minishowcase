@@ -120,12 +120,44 @@
             $img = str_replace(".FLV", ".PNG", $img);
 
         // web request object name, may video
-        $imgWeb = $img;
+        $imgWeb = "flv".$img;
 
         if (!file_exists($img))
         {
             // Guess there is no thumbnail, just load camcorder version.
             $img = "../images/flv_128px.png";
+        }
+    }
+
+    if (strpos(strtolower($img), "mp4") !== FALSE) {
+        if (strpos($img, "mp4") !== FALSE)
+            $img = str_replace(".mp4", ".png", $img);
+        else
+            $img = str_replace(".MP4", ".PNG", $img);
+
+        // web request object name, may video
+        $imgWeb = "mp4".$img;
+
+        if (!file_exists($img))
+        {
+            // Guess there is no thumbnail, just load camcorder version.
+            $img = "../images/mp_128px.png";
+        }
+    }
+
+    if (strpos(strtolower($img), "m3u8") !== FALSE) {
+        if (strpos($img, "m3u8") !== FALSE)
+            $img = str_replace(".m3u8", ".png", $img);
+        else
+            $img = str_replace(".M3U8", ".PNG", $img);
+
+        // web request object name, may video
+        $imgWeb = "m3u8".$img;
+
+        if (!file_exists($img))
+        {
+            // Guess there is no thumbnail, just load camcorder version.
+            $img = "../images/hls_128px.png";
         }
     }
 
@@ -178,13 +210,13 @@
 			//// copy image ////
 			if (($img_type == "JPG") && (imagetypes() & IMG_JPG)) {
 				$image = imagecreatefromjpeg($img);
-				
+                $imgWeb = "jpg".$img;
 			} else if (($img_type == "GIF") && (imagetypes() & IMG_GIF)) {
 				$image = imagecreatefromgif($img);
-				
+                $imgWeb = "gif".$img;
 			} else if (($img_type == "PNG") && (imagetypes() & IMG_PNG)) {
 				$image = imagecreatefrompng($img);
-				
+                $imgWeb = "png".$img;
 			}
 		} else {
 			$error_msg = "!! BAD IMG";

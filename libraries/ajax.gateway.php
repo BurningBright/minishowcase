@@ -82,7 +82,9 @@
 					&& (is_dir("$base_path/$folder/$filename"))
 					) {
 						// Ignore if this is an FLV thumbnail, we'll display the thumbnail for the FLV video
-						if (isFLVThumbnail("$base_path/$folder/$filename"))
+						if (isFLVThumbnail("$base_path/$folder/$filename") ||
+                            isMP4Thumbnail("$base_path/$folder/$filename") ||
+                            isHLSThumbnail("$base_path/$folder/$filename"))
 							continue;
 						$galleries[] = $filename;
 						
@@ -291,7 +293,7 @@
 
 				$size = @getimagesize($imgPath);
 				
-				if (isFLV("../".$img))
+				if (isFLV("../".$img) || isMP4("../".$img) || isHLS("../".$img))
                     $size = array($settings['video_size_width'], $settings['video_size_height']);
 				
 				//if ($size) {
@@ -340,7 +342,7 @@
 		$size = @getimagesize("../".$img);
 		
 		// For the video, set to a fixed size
-		if (isFLV("../".$img))
+        if (isFLV("../".$img) || isMP4("../".$img) || isHLS("../".$img))
             $size = array($settings['video_size_width'], $settings['video_size_height']);
 		
 		$output = $num.";".$img.";".$name.";".$size[0].";".$size[1].";".$desc;

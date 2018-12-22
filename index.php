@@ -104,9 +104,19 @@
 	<link rel="stylesheet" href="styles/includes.css" type="text/css" media="screen" />
 	<!-- END HEADER/FOOTER CSS -->
 	<?php } ?>
-	
+
+    <!--<script src="http://code.jquery.com/jquery-1.11.1.min.js" type="text/javascript"></script>-->
 	<script src="libraries/jquery-1.11.1.min.js" type="text/javascript"></script>
-    <script src="libraries/flv.min.js" type="text/javascript"></script>
+    <script src="libraries/video/flv-1.5.0.min.js" type="text/javascript"></script>
+
+    <!--<link href="http://vjs.zencdn.net/7.0/video-js.min.css" rel="stylesheet">
+    <script src="http://vjs.zencdn.net/7.0/video.min.js"></script>-->
+    <link href="libraries/video/video-7.4.1.min.css" rel="stylesheet">
+    <script src="libraries/video/video-7.4.1.min.js"></script>
+
+    <!--<script src="https://cdnjs.com/libraries/videojs-contrib-hls"></script>-->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.15.0/videojs-contrib-hls.min.js"></script>-->
+    <script src="libraries/video/videojs-contrib-hls.min.js"></script>
 	
 	<!-- START SCRIPTS/STYLESHEETS FOR IE PC -->
 	<!--[if IE]>

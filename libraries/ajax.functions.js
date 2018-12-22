@@ -1132,11 +1132,32 @@ function generateDefaultGalleryMenu(galleries, expanded){
 		
 		// Add support for displaying FLVs
 		var flvIndex = img.toLowerCase().indexOf('flv');
-		if (flvIndex >= 0) {
+		// Add support for displaying MP4
+		var mpIndex = img.toLowerCase().indexOf('mp4');
+		// Add support for displaying HLS
+		var hlsIndex = img.toLowerCase().indexOf('m3u8');
+
+		if (hlsIndex >= 0) {
 			// We have an FLV video, so load an iframe that will play the video
 			var nfw = fw + 20;
 			var nfh = fh + 20;
-			//imgout = '<iframe style="background-color: white;" src="libraries/flv.player.php?file=' + Url.encode(img) + '&width=' + fw + '&height=' + fh + '" width="' + nfw + '" height="' + nfh + '"><p>Your browser does not support iframes.</p></iframe>';
+			imgout = '<video id="video_hls" class="video-js" controls preload="none" style="width:600px;height:480px" data-setup=\'{}\' >' +
+				'<source src="' + Url.encode(img) + '" type="application/x-mpegURL"></video>';
+
+		} else if (mpIndex >= 0) {
+			// We have an MP4 video, so load an iframe that will play the video
+			var nfw = fw + 20;
+			var nfh = fh + 20;
+			imgout = '<video id="video_mp4" class="video-js" controls preload="none" style="width:600px;height:480px" data-setup=\'{}\' >' +
+					'<source src="' + Url.encode(img) + '" type="video/mp4"></video>';
+			//imgout = '<a target="_blank" src="libraries/video/mp4.player.php?file='
+			//	+ Url.encode(img) + '&width=' + fw + '&height=' + fh + '" width="' + nfw + '" height="'
+			//	+ nfh + '"><p>Mp4 jump test</p></a>';
+
+		} else if (flvIndex >= 0) {
+			// We have an FLV video, so load an iframe that will play the video
+			var nfw = fw + 20;
+			var nfh = fh + 20;
 			imgout = '<video id="video_flv" controls preload="none" style="width:498px;height:378px" ></video>';
 
 		} else {
@@ -1203,6 +1224,16 @@ function generateDefaultGalleryMenu(galleries, expanded){
 				flvPlayer.load();
 				flvPlayer.play();
 			}
+		} else if (mpIndex >= 0) {
+			var player = videojs('video_mp4', {
+				techOrder: ['html5'],
+				playbackRates: [1, 1.5, 2, 3, 5]
+			});
+		} else if (hlsIndex >= 0) {
+			var player = videojs('video_hls', {
+				techOrder: ['html5'],
+				playbackRates: [1, 1.5, 2, 3, 5]
+			});
 		}
 	}
 	

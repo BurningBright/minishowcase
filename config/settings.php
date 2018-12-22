@@ -414,6 +414,8 @@
 	$settings['allowed_extensions'][] = 'png';
 	$settings['allowed_extensions'][] = 'gif';
 	$settings['allowed_extensions'][] = 'flv';
+    $settings['allowed_extensions'][] = 'mp4';
+    $settings['allowed_extensions'][] = 'm3u8';
 	
 	
 	/* if folder /cache/ is writable and create_thumbnails is TRUE
