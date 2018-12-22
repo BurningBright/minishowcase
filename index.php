@@ -128,7 +128,7 @@
 
     <!--<script src="https://cdnjs.com/libraries/videojs-contrib-hls"></script>-->
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.15.0/videojs-contrib-hls.min.js"></script>-->
-    <script src="libraries/video/videojs-contrib-hls.min.js"></script>
+    <!--<script src="libraries/video/videojs-contrib-hls.min.js"></script>-->
 
     <!--<script src="http://cdn.sc.gl/videojs-hotkeys/latest/videojs.hotkeys.min.js"></script>-->
     <!--<script src="libraries/videojs.hotkeys.min.js"></script>-->
@@ -228,6 +228,9 @@
 				
 				<!-- thumbs container -->
 				<div id="thumbs_cont"></div>
+
+                <!-- thumbs swipe video container -->
+                <div id="thumbs_cont_video"></div>
 				
 				<div id="gallery_nav2">
 					<div id="gallery_block2"></div>

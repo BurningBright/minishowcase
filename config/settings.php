@@ -321,7 +321,7 @@
 	 *	 ( http://jquery.com/demo/thickbox )
 	 *	 some modifications by victor zambrano
 	 *
-	 * 3 : PhotoSwipe 4.1.1 include by Leon Lin
+	 * 3 : PhotoSwipe 4.1.1 include by Leon
 	 *     ( http://photoswipe.com/documentation/getting-started.html )
 	 *     mobile optimise, affect optimise
 	 *

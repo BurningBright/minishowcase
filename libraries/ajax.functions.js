@@ -599,17 +599,126 @@ function generateDefaultGalleryMenu(galleries, expanded){
 		}
 		
 		innerhtml('thumbs_cont','');
+		innerhtml('thumbs_cont_video','');
 		
 		showLoadingBar();
 		
 		active_id = id;
-		
-		cp.call(base_url+'libraries/ajax.gateway.php', 'get_thumbs', 
-			updateThumbs, Url.encode(id), min, max);
-		
+
+		if (preview_mode == 3) {
+			cp.call(base_url + 'libraries/ajax.gateway.php', 'get_thumbs',
+				updateThumbsSwipe, Url.encode(id), min, max);
+		} else {
+			cp.call(base_url + 'libraries/ajax.gateway.php', 'get_thumbs',
+				updateThumbs, Url.encode(id), min, max);
+		}
 		getBlockNav(active_id);
 	}
-	
+
+	function updateThumbsSwipe(request)
+	{
+		var result = getEncoded(request,'url');
+
+		images_total = 0;
+		image_list = [];
+		thNum = 0;
+
+		gallery_title_cont = '<span class="xtra">'
+			+lang['gallery_name_prepend']
+			+'</span> <strong>'
+			+galleryName(active_id)
+			+'</strong> <span class="xtra">'
+			+lang['gallery_name_append']
+
+			// reload gallery
+			+' <a href="javascript:;" onclick="active_id=false;reloading=true;setGallery('
+			+"'"+active_id.sq()+"', false"
+			+')">('+lang['gallery_reload']+')</a>'
+
+			+'</span>';
+
+		// slideshow
+		var slideshow_link = ' <a href ="javascript:;"'
+			+ ' onclick="startSlideshow();">'
+			+ '('+lang['slideshow_name']+')</a>'
+
+		display('tools_menu', 'block');
+		innerhtml('tools_slideshow',slideshow_link);
+
+		/* gateway internal error reporting: */
+		// no images in gallery
+		if (result == "null") {
+			resetLoadingBar();
+			innerhtml('thumbs_cont', '<p class="noimg">'+lang['alert_no_images']+'...</p>');
+			innerhtml('thumbs_load','');
+			innerhtml('gallery_title',gallery_title_cont);
+
+			// show thumbnails
+		} else {
+			th_array = result.split('|');
+			images_total = th_array.pop();
+
+			innerhtml('thumbs_cont','<ul id="thumbs_ul"></ul>');
+			innerhtml('thumbs_cont_video','<ul id="thumbs_ul_video"></ul>');
+
+			innerhtml('gallery_title', '<img src="'+indicator_src+'" /> '+gallery_title_cont);
+
+			var thul = getID('thumbs_ul')
+
+			var thulvideo = getID('thumbs_ul_video')
+
+			var video_reg = /\.flv\b|\.mp4\b|\.m3u8\b/gi
+
+			for (i=1; i<=images_total; i++) {
+				var li = document.createElement('li')
+				li.setAttribute('id','list_'+i)
+
+
+					var f = document.createElement('figure')
+					f.setAttribute('class','th_load_div')
+					f.setAttribute('id','thcont_'+i)
+					var a = document.createElement('a')
+					a.setAttribute('id','link_'+i)
+					f.appendChild(a)
+					if (show_thumb_name) {
+						var p = document.createElement('p')
+						p.setAttribute('id','text_'+i)
+						p.innerHTML = '&nbsp;'
+						f.appendChild(p)
+					}
+
+					li.appendChild(f)
+				if (th_array[i-1].search(video_reg) < 0) {
+					thul.appendChild(li)
+				} else {
+					thulvideo.appendChild(li)
+				}
+
+				//// loadbar
+				updateLoadingBar((i-1), images_total);
+			}
+
+			if (set_thumbnail_container_height) {
+				var thContDiv = getID('thumbs_ul');
+				thContDiv.style.height = (thContDiv.offsetHeight + 10) + "px";
+				thContDiv = getID('thumbs_ul_video');
+				thContDiv.style.height = (thContDiv.offsetHeight + 10) + "px";
+			}
+
+			if (use_load_interval) {
+				thNum = 0;
+				var intNum = (msie) ? 1 : 0;
+				loadThumbsInterval = setInterval("buildAllThumbs()",intNum);
+
+			} else {
+				thNum = 0;
+				buildAllThumbs();
+
+			}
+		}
+	}
+
+
 	
 	function updateThumbs(request)
 	{
@@ -659,6 +768,8 @@ function generateDefaultGalleryMenu(galleries, expanded){
 			images_total = th_array.pop();
 			
 			innerhtml('thumbs_cont','<ul id="thumbs_ul" class="thumbs_ul"></ul>');
+
+			innerhtml('thumbs_cont_video','<ul id="thumbs_ul_video"></ul>');
 				
 			innerhtml('gallery_title', '<img src="'+indicator_src+'" /> '+gallery_title_cont);
 				
@@ -667,47 +778,29 @@ function generateDefaultGalleryMenu(galleries, expanded){
 			for (i=1; i<=images_total; i++) {
 				var li = document.createElement('li')
 				li.setAttribute('id','list_'+i)
-				
-				if (preview_mode == 3) {
-					var f = document.createElement('figure')
-					//f.setAttribute('class','th_load_div')
-					//f.setAttribute('id','thcont_'+i)
-					var a = document.createElement('a')
-					a.setAttribute('id','link_'+i)
-					f.appendChild(a)
-					if (show_thumb_name) {
-						var p = document.createElement('p')
-						p.setAttribute('id','text_'+i)
-						p.innerHTML = '&nbsp;'
-						f.appendChild(p)
-					}
-					
-					li.appendChild(f)
-					
-				} else {
-				
-					var a = document.createElement('a')
-					a.setAttribute('id','link_'+i)
-					
-					var d1 = document.createElement('div')
-					d1.setAttribute('id','image_'+i)
-					
-					var d2 = document.createElement('div')
-					d2.setAttribute('class','th_load_div')
-					d2.innerHTML = 'loading...'
-					
-					d1.appendChild(d2)
-					a.appendChild(d1)
-					
-					if (show_thumb_name) {
-						var p = document.createElement('p')
-						p.setAttribute('id','text_'+i)
-						p.innerHTML = '&nbsp;'
-						a.appendChild(p)
-					}
-					
-					li.appendChild(a)
+
+				var a = document.createElement('a')
+				a.setAttribute('id','link_'+i)
+
+				var d1 = document.createElement('div')
+				d1.setAttribute('id','image_'+i)
+
+				var d2 = document.createElement('div')
+				d2.setAttribute('class','th_load_div')
+				d2.innerHTML = 'loading...'
+
+				d1.appendChild(d2)
+				a.appendChild(d1)
+
+				if (show_thumb_name) {
+					var p = document.createElement('p')
+					p.setAttribute('id','text_'+i)
+					p.innerHTML = '&nbsp;'
+					a.appendChild(p)
 				}
+
+				li.appendChild(a)
+
 				
 				thul.appendChild(li)
 				
@@ -746,7 +839,10 @@ function generateDefaultGalleryMenu(galleries, expanded){
 		}
 	}
 	
-	
+
+
+
+
 	function buildAllThumbs()
 	{
 		knum = thNum;
@@ -803,11 +899,24 @@ function generateDefaultGalleryMenu(galleries, expanded){
 				
 			} else if (preview_mode == 3) {
 				// PhotoSwipe 4.1.1 by Cody Leon
-				alink.href = image_url;
 				//alink.className = 'photoswipe';
 				alink.rel = active_id.sq();
 				//alink.style.display = 'none';
 				alink.setAttribute('data-size', w+'x'+h)
+				alink.num = inum;
+				alink.img = img;
+				alink.name = name;
+
+				var video_reg = /\.flv\b|\.mp4\b|\.m3u8\b/gi
+				if (img.search(video_reg) > 0) {
+					alink.onclick = function() {
+						getImage(this.num, this.img, this.filename);
+					}
+				} else {
+					// picture need src attribute
+					alink.href = image_url;
+				}
+
 			} else {
 				alink.href = 'javascript:;';
 				alink.num = inum;
@@ -833,11 +942,11 @@ function generateDefaultGalleryMenu(galleries, expanded){
 					+' class="thumb_loader"'
 					+' title="'+name+'" alt="'+name+'"'
 					+' src="'+indicator_src+'" />'
-				
+
 				if (show_thumb_name) {
 					output_text = thumbName(image_list[inum]['name']);
 				}
-				
+
 				getID('link_'+inum).innerHTML = output_image;
 			} else {
 			
@@ -898,9 +1007,9 @@ function generateDefaultGalleryMenu(galleries, expanded){
 	{
 		thNum++;
 		var inum = thNum;
-		
+
 		updateLoadingBar(inum, images_total);
-		
+
 		if (image_list[inum]) {
 			var thumbPath = '';
 			if (image_list[inum]['thumb'] != '1') {
@@ -959,10 +1068,10 @@ function generateDefaultGalleryMenu(galleries, expanded){
 				+'width="'+ww+'" '
 				+'height="'+hh+'" />';
 			
-			if(preview_mode == 3)
-				innerhtml('link_'+inum, output_image);
-			else
-			innerhtml('thcont_'+inum, output_image);
+			if(preview_mode == 3) {
+					innerhtml('link_' + inum, output_image);
+			} else
+				innerhtml('thcont_'+inum, output_image);
 			
 			/*if (show_thumb_name) {
 				output_text = thumbName(image_list[inum]['name']);
@@ -1014,9 +1123,7 @@ function generateDefaultGalleryMenu(galleries, expanded){
 	function ThickBoxInit() { TB_init(); }
 	function SlimboxInit() { Lightbox.init(); }
 	function PhotoSwipeInit() { 
-		initPhotoSwipeFromDOM('.thumbs_ul'); 
-		//initPhotoSwipeFromDOM('.my-gallery');
-		
+		initPhotoSwipeFromDOM('#thumbs_ul');
 	}
 	
 	
@@ -1195,29 +1302,26 @@ function generateDefaultGalleryMenu(galleries, expanded){
 		var mpIndex = img.toLowerCase().indexOf('mp4');
 		// Add support for displaying HLS
 		var hlsIndex = img.toLowerCase().indexOf('m3u8');
-
+		var timestamp = (new Date()).valueOf();
 		if (hlsIndex >= 0) {
 			// We have an FLV video, so load an iframe that will play the video
 			var nfw = fw + 20;
 			var nfh = fh + 20;
-			imgout = '<video id="video_hls" class="video-js" controls preload="none" style="width:600px;height:480px" data-setup=\'{}\' >' +
+			imgout = '<video id="video_hls_' + timestamp + '" class="video-js" controls preload="none" style="width:600px;height:480px" data-setup=\'{}\' >' +
 				'<source src="' + Url.encode(img) + '" type="application/x-mpegURL"></video>';
 
 		} else if (mpIndex >= 0) {
 			// We have an MP4 video, so load an iframe that will play the video
 			var nfw = fw + 20;
 			var nfh = fh + 20;
-			imgout = '<video id="video_mp4" class="video-js" controls preload="none" style="width:600px;height:480px" data-setup=\'{}\' >' +
+			imgout = '<video id="video_mp4_' + timestamp + '" class="video-js" controls preload="none" style="width:600px;height:480px" data-setup=\'{}\' >' +
 					'<source src="' + Url.encode(img) + '" type="video/mp4"></video>';
-			//imgout = '<a target="_blank" src="libraries/video/mp4.player.php?file='
-			//	+ Url.encode(img) + '&width=' + fw + '&height=' + fh + '" width="' + nfw + '" height="'
-			//	+ nfh + '"><p>Mp4 jump test</p></a>';
 
 		} else if (flvIndex >= 0) {
 			// We have an FLV video, so load an iframe that will play the video
 			var nfw = fw + 20;
 			var nfh = fh + 20;
-			imgout = '<video id="video_flv" controls preload="none" style="width:498px;height:378px" ></video>';
+			imgout = '<video id="video_flv_' + timestamp + '" controls preload="none" style="width:498px;height:378px" ></video>';
 
 		} else {
 		if (resized_img && create_thumbnails) {
@@ -1274,7 +1378,7 @@ function generateDefaultGalleryMenu(galleries, expanded){
 
 		if (flvIndex >= 0) {
 			if (flvjs.isSupported()) {
-				var videoElement = document.getElementById('video_flv');
+				var videoElement = document.getElementById('video_flv_' + timestamp);
 				var flvPlayer = flvjs.createPlayer({
 					type: 'flv',
 					url: Url.encode(img)
@@ -1284,12 +1388,12 @@ function generateDefaultGalleryMenu(galleries, expanded){
 				flvPlayer.play();
 			}
 		} else if (mpIndex >= 0) {
-			var player = videojs('video_mp4', {
+			var player = videojs('video_mp4_' + timestamp, {
 				techOrder: ['html5'],
 				playbackRates: [1, 1.5, 2, 3, 5]
 			});
 		} else if (hlsIndex >= 0) {
-			var player = videojs('video_hls', {
+			var player = videojs('video_hls_' + timestamp, {
 				techOrder: ['html5'],
 				playbackRates: [1, 1.5, 2, 3, 5]
 			});

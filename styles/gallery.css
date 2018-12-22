@@ -40,7 +40,7 @@ body {
 
 #thumbs_cont table,
 #thumbs_cont tr,
-#thumbs_cont td {
+#thumbs_cont td , #thumbs_cont_video td {
 	border: 0px !important;
 	margin: 0px !important;
 	padding: 0px !important;
@@ -532,7 +532,7 @@ body {
 
 /* thumbs container */
 	
-#thumbs_cont {
+#thumbs_cont , #thumbs_cont_video {
 	width: <?php echo ($content_width-10)?>px;
 	margin: 4px 0px 0px 0px;
 	padding: 0px;
@@ -541,18 +541,18 @@ body {
 	font-family: <?php echo $theme_fonts_text?>;
 }
 
-#thumbs_cont p {
+#thumbs_cont p , #thumbs_cont_video p {
 	padding: 14px 0px 0px 0px;
 	color: <?php echo $theme_alert_bg?>;
 	font-family: <?php echo $theme_fonts_titles?>;
 	font-size: 14px;
 }
 
-#thumbs_cont p.noimg {
+#thumbs_cont p.noimg , #thumbs_cont_video p.noimg {
 	padding-left: 10px;
 }
 
-#thumbs_cont span.load {
+#thumbs_cont span.load , #thumbs_cont_video span.load {
 	display: block;
 	width: <?php echo ($content_width-20)?>px !important;
 	margin: 6px 0px 6px 0px;
@@ -567,7 +567,7 @@ body {
 	border: 1px solid #f30 !important;
 }*/
 
-#thumbs_cont ul {
+#thumbs_cont ul , #thumbs_cont_video ul {
 	visibility: visible;
 	list-style: none;
 	width: <?php echo ($content_width-20)?>px !important;
@@ -575,7 +575,7 @@ body {
 	padding: 0px !important;
 }
 
-#thumbs_cont ul li {
+#thumbs_cont ul li , #thumbs_cont_video ul li {
 	visibility: visible;
 	float: left;
 	width: <?php echo ($thumbnail_max_size+6)?>px;
@@ -587,7 +587,7 @@ body {
 	background: <?php echo $theme_thumbnail_normal?>;
 }
 
-#thumbs_cont ul li p {
+#thumbs_cont ul li p , #thumbs_cont_video ul li p {
 	height: 16px;
 	margin: 1px 0px 0px 0px;
 	padding: 2px 0px 4px 0px;
@@ -600,60 +600,60 @@ body {
 }
 
 
-#thumbs_cont ul li a p {
+#thumbs_cont ul li a p , #thumbs_cont_video ul li a p {
 	color: <?php echo $theme_thumbnail_selected?>;
 }
 
-#thumbs_cont ul li a:hover p {
+#thumbs_cont ul li a:hover p , #thumbs_cont_video ul li a:hover p {
 	color: <?php echo $theme_thumbnail_hover?>;
 }
 
-#thumbs_cont ul li.normal {
+#thumbs_cont ul li.normal , #thumbs_cont_video ul li.normal {
 	background-color: <?php echo $theme_thumbnail_normal?>;
 }
 
-#thumbs_cont ul li.selected {
+#thumbs_cont ul li.selected , #thumbs_cont_video ul li.selected {
 	background-color: <?php echo $theme_thumbnail_selected?>;
 }
 
-#thumbs_cont ul li.visited {
+#thumbs_cont ul li.visited , #thumbs_cont_video ul li.visited {
 	background-color: <?php echo $theme_general_dimmed?>;
 }
 
 #thumbs_cont ul li a,
 #thumbs_cont ul li a:link,
 #thumbs_cont ul li a:active,
-#thumbs_cont ul li a:visited {
+#thumbs_cont ul li a:visited , #thumbs_cont_video ul li a:visited {
 	cursor: hand;
 }
 
-#thumbs_cont ul li a div.th_load_div {
+#thumbs_cont ul li a div.th_load_div , #thumbs_cont_video ul li a div.th_load_div {
 	height: <?php echo ($thumbnail_max_size+26)?>px;
 	margin: 0;
 	padding: 4px 0 0 10px;
 	font-size: 8px;
-	background: url('./images/spinner.gif') no-repeat 4px 4px !important;
+	background: url('../images/spinner.gif') no-repeat 4px 4px !important;
 }
 
-#thumbs_cont ul li a div.th_load_div img {
+#thumbs_cont ul li a div.th_load_div img , #thumbs_cont_video ul li a div.th_load_div img {
 	border: none;
 }
 
-#thumbs_cont ul li img.thumb_img {
+#thumbs_cont ul li img.thumb_img , #thumbs_cont_video ul li img.thumb_img {
 	margin: 3px !important;
 	padding: 0px !important;
 	vertical-align: middle;
 	border: none;
 	/*border-top: 4px solid <?php echo $theme_thumbnail_selected?> !important;*/
-	background: url('images/spinner.gif') no-repeat 4px 4px !important;
+	background: url('../images/spinner.gif') no-repeat 4px 4px !important;
 }
 
-#thumbs_cont ul li img.thumb_img:hover {
+#thumbs_cont ul li img.thumb_img:hover , #thumbs_cont_video ul li img.thumb_img:hover {
 	border: none;
 	/*border-top: 4px solid <?php echo $theme_thumbnail_hover?> !important;*/
 }
 
-#thumbs_cont ul li img.thumb_loader {
+#thumbs_cont ul li img.thumb_loader , #thumbs_cont_video ul li img.thumb_loader {
 	margin: 6px !important;
 	padding: 0px !important;
 	vertical-align: middle;
