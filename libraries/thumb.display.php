@@ -32,7 +32,8 @@
 		"SWC",
 		"IFF",
 		"WBMP",
-		"XBM"
+		"XBM",
+        "FLV"
 	);
 	
 	// debug
@@ -101,9 +102,66 @@
 	
 	$thumb = '';	
 	$image = '';
-	
-	if ($img && file_exists($img)) {
-		
+	$imgWeb = '';
+
+    //// cache images (if enabled)
+    //$current_gallery = array_pop(split("/", dirname($img)));
+    $current_gallery = str_replace("../galleries/", "", dirname($img));
+    $cache_thumb_dir = "../cache/"
+        .$settings['gallery_prefix']
+        .$current_gallery;
+
+
+
+    if (strpos(strtolower($img), "flv") !== FALSE) {
+        if (strpos($img, "flv") !== FALSE)
+            $img = str_replace(".flv", ".png", $img);
+        else
+            $img = str_replace(".FLV", ".PNG", $img);
+
+        // web request object name, may video
+        $imgWeb = "flv".$img;
+
+        if (!file_exists($img))
+        {
+            // Guess there is no thumbnail, just load camcorder version.
+            $img = "../images/flv_128px.png";
+        }
+    }
+
+    if (strpos(strtolower($img), "mp4") !== FALSE) {
+        if (strpos($img, "mp4") !== FALSE)
+            $img = str_replace(".mp4", ".png", $img);
+        else
+            $img = str_replace(".MP4", ".PNG", $img);
+
+        // web request object name, may video
+        $imgWeb = "mp4".$img;
+
+        if (!file_exists($img))
+        {
+            // Guess there is no thumbnail, just load camcorder version.
+            $img = "../images/mp_128px.png";
+        }
+    }
+
+    if (strpos(strtolower($img), "m3u8") !== FALSE) {
+        if (strpos($img, "m3u8") !== FALSE)
+            $img = str_replace(".m3u8", ".png", $img);
+        else
+            $img = str_replace(".M3U8", ".PNG", $img);
+
+        // web request object name, may video
+        $imgWeb = "m3u8".$img;
+
+        if (!file_exists($img))
+        {
+            // Guess there is no thumbnail, just load camcorder version.
+            $img = "../images/hls_128px.png";
+        }
+    }
+
+    if ($img && file_exists($img)) {
 		//// get image size ////
 		$img_info = getimagesize($img);
 		
@@ -152,13 +210,13 @@
 			//// copy image ////
 			if (($img_type == "JPG") && (imagetypes() & IMG_JPG)) {
 				$image = imagecreatefromjpeg($img);
-				
+                $imgWeb = "jpg".$img;
 			} else if (($img_type == "GIF") && (imagetypes() & IMG_GIF)) {
 				$image = imagecreatefromgif($img);
-				
+                $imgWeb = "gif".$img;
 			} else if (($img_type == "PNG") && (imagetypes() & IMG_PNG)) {
 				$image = imagecreatefrompng($img);
-				
+                $imgWeb = "png".$img;
 			}
 		} else {
 			$error_msg = "!! BAD IMG";
@@ -199,17 +257,8 @@
 		$created = imagecopyresampled($thumb, $image, 0, 0, $move_w, $move_h, $w, $h, $th_w, $th_h);
 		
 	}
-	
-	//// cache images (if enabled)
-	//$current_gallery = array_pop(split("/", dirname($img)));
-	$current_gallery = str_replace("../galleries/", "", dirname($img));
-	$cache_thumb_dir = "../cache/"
-		.$settings['gallery_prefix']
-		.$current_gallery;
 		
-	$thumb_url = $cache_thumb_dir."/"
-		.$_prefix
-		.basename($img);
+	$thumb_url = $cache_thumb_dir."/".$_prefix.basename($imgWeb);
 		
 	if ($unlink) $delete = @unlink($thumb_url);
 	

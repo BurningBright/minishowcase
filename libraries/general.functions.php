@@ -190,7 +190,7 @@
 		}
 		
 		if ($sort_flag) return $files;
-		else return 'null';
+		return 'null';
 	}
 	
 	
@@ -243,6 +243,7 @@
 					&& (strpos($file,"_") !== 0)
 					&& (!in_array($file, $settings['hidden_files']))
 					&& (in_array(strToLower($pinfo["extension"]),$settings['allowed_extensions']))
+					&& !isFLVThumbnail($f)
 					) {
 					$list[] = $f;
 				}
@@ -393,6 +394,18 @@
 			return true;
 		return false;
 	}
+    // Check if a file is an MP4 video
+    function isMP4($filename){
+        if (strpos(strtolower($filename), "mp4") !== FALSE)
+            return true;
+        return false;
+    }
+    // Check if a file is an HLS video
+    function isHLS($filename){
+        if (strpos(strtolower($filename), "m3u8") !== FALSE)
+            return true;
+        return false;
+    }
 	
 	// Get the jpg thumbnail associated with an FLV video (if none, returns empty string)
 	function getFLVThumbnail($filename)
@@ -427,6 +440,40 @@
 		}
 		return false;
 	}
+
+    // Checks if an image is a thumbnail for an MP4 video
+    // This is useful because generally you want to display the thumbnail for the MP4 video
+    function isMP4Thumbnail($filename)
+    {
+        $img = $filename;
+        if (strpos(strtolower($img), "jpg") !== FALSE) {
+            if (strpos($img, "jpg") !== FALSE)
+                $img = str_replace(".jpg", ".mp4", $img);
+            else
+                $img = str_replace(".JPG", ".MP4", $img);
+
+            if (file_exists($img))
+                return true;
+        }
+        return false;
+    }
+
+    // Checks if an image is a thumbnail for an HLS video
+    // This is useful because generally you want to display the thumbnail for the HLS video
+    function isHLSThumbnail($filename)
+    {
+        $img = $filename;
+        if (strpos(strtolower($img), "jpg") !== FALSE) {
+            if (strpos($img, "jpg") !== FALSE)
+                $img = str_replace(".jpg", ".m3u8", $img);
+            else
+                $img = str_replace(".JPG", ".M3U8", $img);
+
+            if (file_exists($img))
+                return true;
+        }
+        return false;
+    }
         
         // Checks if zip support can be enabled
         // and checks if zip support should be enabled
@@ -480,7 +527,10 @@
                     && (in_array(strToLower($pinfo["extension"]),$settings['allowed_extensions']))
                     ) {
                             $full_filename = "$base_path/galleries/$id/$filename";
-
+                            
+                            // Check that this is not a thumbnail for an FLV file
+                            if (isFLVThumbnail($full_filename))
+                                    continue;
                             $files[] = $filename;
                     }
                 }
